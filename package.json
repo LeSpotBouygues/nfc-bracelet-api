@@ -1,0 +1,26 @@
+{
+  "name": "nfc-bracelet-api",
+  "version": "1.0.0",
+  "description": "api",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec --bail test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeSpotBouyguesEpitech/nfc-bracelet-api.git"
+  },
+  "author": "eric phung",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LeSpotBouyguesEpitech/nfc-bracelet-api/issues"
+  },
+  "homepage": "https://github.com/LeSpotBouyguesEpitech/nfc-bracelet-api#readme",
+  "dependencies": {
+    "koa": "^1.1.2"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.4",
+    "supertest": "^1.1.0"
+  }
+}
