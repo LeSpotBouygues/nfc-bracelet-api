@@ -20,9 +20,7 @@
     "koa": "^1.1.2"
   },
   "devDependencies": {
-    "coveralls": "^2.11.4",
     "mocha": "^2.3.4",
-    "mocha-lcov-reporter": "^1.0.0",
     "supertest": "^1.1.0"
   }
 }
