@@ -6,3 +6,7 @@
 
 [coveralls-image]: https://coveralls.io/repos/LeSpotBouyguesEpitech/nfc-bracelet-api/badge.svg?branch=master&service=github
 [coveralls-url]: https://coveralls.io/github/LeSpotBouyguesEpitech/nfc-bracelet-api
+
+The nfc-api is host on aws ec2.
+- public DNS : ec2-54-86-80-245.compute-1.amazonaws.com
+- port : 3000
