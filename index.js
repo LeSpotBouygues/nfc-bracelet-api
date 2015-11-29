@@ -3,4 +3,6 @@
  */
 var app = require('./app');
 
+require('./routes/companion');
+
 app.listen(process.env.PORT || 3000);

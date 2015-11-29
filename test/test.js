@@ -5,6 +5,7 @@
 var request = require('supertest');
 
 var app = require('../app.js');
+require('../index');
 
 describe('test koa connection', function () {
     it('should return code 200', function (done) {
