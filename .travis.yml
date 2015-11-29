@@ -2,6 +2,8 @@ language: node_js
 node_js:
 - node
 - iojs
+services:
+- mongodb
 before_install:
 - openssl aes-256-cbc -K $encrypted_6de421ebfa06_key -iv $encrypted_6de421ebfa06_iv
   -in deploy-key.enc -out deploy-key -d
