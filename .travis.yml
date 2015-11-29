@@ -10,6 +10,7 @@ before_script:
 after_success:
 - chmod 600 deploy-key
 - mv deploy-key ~/.ssh/id_rsa
+- ssh-keyscan -H 54.86.80.245 >> ~/.ssh/known_hosts
 - npm run deploy-dev
 after_script:
 - ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly
