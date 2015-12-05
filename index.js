@@ -6,6 +6,7 @@ var logger = require('koa-logger');
 
 app.use(logger());
 
+require('./routes/login');
 require('./routes/companion');
 
 app.listen(process.env.PORT || 3000);
