@@ -12,12 +12,11 @@ exports.list = list;
 function *create() {
     var body = this.request.body;
     this.assert(body.name, 400, 'missing params');
-    try {
-        var user = yield db.Companion.create(this.request.body);
-    } catch (err) {
-        if (err.code === 11000) this.throw(409, 'duplicate user');
+    if (body.username) {
+        var companion = yield db.Companion.findOne({username: body.username}).exec();
+        this.assert(!companion, 409, 'duplicate user');
     }
-    this.body = user;
+    this.body = yield db.Companion.create(body);
 }
 
 function *createToken() {
