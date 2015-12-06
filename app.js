@@ -5,4 +5,5 @@ var koa = require('koa');
 var mongoose = require('mongoose');
 
 module.exports = koa();
-mongoose.connect('mongodb://localhost/nfc-api-db');
+if (process.env.ENV === 'dev') mongoose.connect('mongodb://localhost/nfc-api-testingDB');
+else mongoose.connect('mongodb://localhost/nfc-api-db');
