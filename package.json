@@ -4,7 +4,7 @@
   "description": "api",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec --bail test/*.js",
+    "test": "ENV=dev mocha --reporter spec --bail test/*.js",
     "deploy-dev": "pm2 deploy ecosystem.json dev",
     "cover": "istanbul cover node_modules/mocha/bin/_mocha"
   },

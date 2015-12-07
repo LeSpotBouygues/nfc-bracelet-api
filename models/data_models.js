@@ -10,7 +10,7 @@ companionSchema = mongoose.Schema({
     name: {type: String},
     chief: {type: Boolean, default: false},
     bracelet: {type: String},
-    username: {type: String, unique: true},
+    username: {type: String},
     password: {type: String, select: false}
 });
 
