@@ -12,5 +12,6 @@ router.get('/', function *() {
 });
 router.post('/companions', parseBody, companion.create);
 router.get('/companions', companion.list);
+router.get('/companions/:idCompanion', companion.getById);
 
 app.use(router.routes());

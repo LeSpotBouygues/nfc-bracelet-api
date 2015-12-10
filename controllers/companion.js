@@ -8,6 +8,7 @@ var db = require('../models/data_models');
 exports.create = create;
 exports.createToken = createToken;
 exports.list = list;
+exports.getById = getById;
 
 function *create() {
     var body = this.request.body;
@@ -31,4 +32,12 @@ function *createToken() {
 
 function *list() {
     this.body = yield db.Companion.find().exec();
+}
+
+function *getById() {
+    try {
+        var companion = yield db.Companion.findById(this.params.idCompanion).exec();
+    } catch (err) {
+    }
+    this.body = companion;
 }

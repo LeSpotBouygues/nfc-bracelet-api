@@ -42,7 +42,23 @@ describe('Companions', function () {
         request
             .get('/companions')
             .expect('Content-Type', 'application/json; charset=utf-8')
+            .expect(200)
+            .end(function (err, res) {
+                this.id = res.body[0]._id;
+                done(err);
+            }.bind(this));
+    });
+
+    it('GET /companions/:idCompanion should return 200', function (done) {
+        request
+            .get('/companions/' + this.id)
             .expect(200, done);
+    });
+
+    it('GET /companions/:idCompanion should return 204', function (done) {
+        request
+            .get('/companions/123')
+            .expect(204, done);
     });
 });
 
