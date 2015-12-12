@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 
 var companionSchema;
+var taskSchema;
 
 companionSchema = mongoose.Schema({
     name: {type: String},
@@ -14,7 +15,17 @@ companionSchema = mongoose.Schema({
     password: {type: String, select: false}
 });
 
+taskSchema = mongoose.Schema({
+    project: {type: String},
+    parent: {type: String},
+    code: {type: String},
+    name: {type: String},
+    niv: {type: Number},
+    child: {type: Array}
+});
+
 var Companion = mongoose.model('Companion', companionSchema);
+var Task = mongoose.model('Task', taskSchema);
 
 Companion.schema.pre('save', function (next) {
     var user = this;
@@ -31,3 +42,4 @@ Companion.schema.pre('save', function (next) {
 });
 
 exports.Companion = Companion;
+exports.Task = Task;
