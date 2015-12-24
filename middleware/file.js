@@ -9,6 +9,7 @@ var xlsx = require('xlsx');
 
 exports.setListTask = setListTask;
 exports.get = get;
+exports.getWorksheet = getWorksheet;
 
 function *setListTask(next){
     this.fileType = 'task';
@@ -36,6 +37,18 @@ function *get(next) {
         part.pipe(fs.createWriteStream(filename));
         this.xlsxFile = filename;
     }
-
     yield next;
+}
+
+function getWorksheet(filename) {
+    return function (done) {
+        try {
+            var workbook = xlsx.readFile(filename);
+        } catch (err) {
+            return done(err);
+        }
+        var fileName = workbook.SheetNames[0];
+        var worksheet = workbook.Sheets[fileName];
+        return done(null, worksheet);
+    }
 }
