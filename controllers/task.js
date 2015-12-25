@@ -44,8 +44,10 @@ function *getList() {
 function *importTask() {
 
     try {
-        var worksheet = yield file.getWorksheet(this.xlsxFile.toString());
+        var filename = path.basename(this.request.body.files['my_file'].path);
+        var worksheet = yield file.getWorksheet(filename);
     } catch (e) {
+        fs.unlinkSync(this.request.body.files['my_file'].path);
         this.throw(500, 'fail read file during import');
     }
 
@@ -74,7 +76,7 @@ function *importTask() {
             data.push(task);
         }
     }
-    fs.unlinkSync(this.xlsxFile.toString());
+    fs.unlinkSync(this.request.body.files['my_file'].path);
     yield db.Task.remove();
     this.body = yield db.Task.create(data);
 }
