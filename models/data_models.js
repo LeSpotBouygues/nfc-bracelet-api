@@ -12,7 +12,9 @@ companionSchema = mongoose.Schema({
     chief: {type: Boolean, default: false},
     bracelet: {type: String},
     username: {type: String},
-    password: {type: String, select: false}
+    password: {type: String, select: false},
+    company: {type: String},
+    position: {type: String}
 });
 
 taskSchema = mongoose.Schema({

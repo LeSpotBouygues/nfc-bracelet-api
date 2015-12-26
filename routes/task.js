@@ -4,11 +4,11 @@
 var app = require('../app.js');
 var router = require('koa-router')();
 var parseBody = require('koa-body')();
+var parseMultipart = require('koa-body')({formidable: {uploadDir: __dirname + '/..'}, multipart: true});
 
-var file = require('../middleware/file');
 var task = require('../controllers/task');
 
 router.get('/task', task.getList);
-router.post('/task/import', file.setListTask, file.get, task.importTask);
+router.post('/task/import', parseMultipart, task.importTask);
 
 app.use(router.routes());

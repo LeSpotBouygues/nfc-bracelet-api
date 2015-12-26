@@ -6,6 +6,7 @@ var fs = require('fs');
 var path = require('path');
 var xlsx = require('xlsx');
 
+var file = require('../middleware/file');
 var db = require('../models/data_models.js');
 
 exports.getList = getList;
@@ -41,29 +42,32 @@ function *getList() {
 }
 
 function *importTask() {
-    var name = this.xlsxFile.toString();
 
-    var workbook = xlsx.readFile(name);
-    var fileName = workbook.SheetNames[0];
-    var worksheet = workbook.Sheets[fileName];
+    try {
+        var filename = path.basename(this.request.body.files['my_file'].path);
+        var worksheet = yield file.getWorksheet(filename);
+    } catch (e) {
+        fs.unlinkSync(this.request.body.files['my_file'].path);
+        this.throw(500, 'fail read file during import');
+    }
 
+    var labels = ['Définition de projet', 'Elément d\'OTP', 'Désignation', 'Niv.'];
     var pos = {};
     var data = [];
 
     for (cell in worksheet) {
         if (cell[0] === '!') continue;
         var value = worksheet[cell].v.trim();
-        if (value === 'Définition de projet' ||
-            value === 'Elément d\'OTP' ||
-            value === 'Désignation' ||
-            value === 'Niv.') pos[value] = cell[0];
+        var idx = labels.indexOf(value);
+
+        if (idx !== -1) pos[value] = cell[0];
         else if (cell[0] === pos['Définition de projet']) {
             var task = {};
             var y = cell.substr(1);
             task.projet = value;
-            task.code = worksheet[pos['Elément d\'OTP'] + y].v.trim();
-            task.name = worksheet[pos['Désignation'] + y].v.trim();
-            task.niv = parseInt(worksheet[pos['Niv.'] + y].v.trim());
+            task.code = pos['Elément d\'OTP']  ? worksheet[pos['Elément d\'OTP'] + y].v.trim() : '';
+            task.name = pos['Désignation'] ? worksheet[pos['Désignation'] + y].v.trim() : '';
+            task.niv = pos['Niv.'] ? parseInt(worksheet[pos['Niv.'] + y].v.trim()) : '';
 
             if (task.niv !== 1) {
                 var index = task.code.lastIndexOf('.');
@@ -72,6 +76,7 @@ function *importTask() {
             data.push(task);
         }
     }
+    fs.unlinkSync(this.request.body.files['my_file'].path);
     yield db.Task.remove();
     this.body = yield db.Task.create(data);
 }
