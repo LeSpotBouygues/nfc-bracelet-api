@@ -60,11 +60,17 @@ describe('Companions', function () {
             .get('/companions/123')
             .expect(204, done);
     });
-});
 
-after(function (done) {
-    mongoose.connection.db.dropCollection('companions', function (err) {
-        if (err) done(err);
-        done();
-    })
+    it('GET /companions/:name/name should return 200', function (done) {
+        request
+            .get('/companions/lol/name')
+            .expect(200, done);
+    });
+
+    after(function (done) {
+        mongoose.connection.db.dropCollection('companions', function (err) {
+            if (err) done(err);
+            done();
+        })
+    });
 });

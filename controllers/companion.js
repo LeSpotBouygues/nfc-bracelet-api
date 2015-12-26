@@ -12,6 +12,7 @@ exports.create = create;
 exports.createToken = createToken;
 exports.list = list;
 exports.getById = getById;
+exports.getByName = getByName;
 exports.importCompanion = importCompanion;
 
 function *create() {
@@ -44,6 +45,11 @@ function *getById() {
     } catch (err) {
     }
     this.body = companion;
+}
+
+function *getByName() {
+    var nameCandidate = new RegExp('\^' + this.params.name, 'i');
+    this.body = yield db.Companion.find({name: nameCandidate}).exec();
 }
 
 function *importCompanion() {

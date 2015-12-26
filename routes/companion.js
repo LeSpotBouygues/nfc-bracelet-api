@@ -14,6 +14,7 @@ router.get('/', function *() {
 router.post('/companions', parseBody, companion.create);
 router.get('/companions', companion.list);
 router.get('/companions/:idCompanion', companion.getById);
-router.post('/companion/import', parseMultipart, companion.importCompanion);
+router.get('/companions/:name/name', companion.getByName);
+router.post('/companions/import', parseMultipart, companion.importCompanion);
 
 app.use(router.routes());
