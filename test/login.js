@@ -21,14 +21,14 @@ var dataLogin = [
     }
 ];
 
-before(function (done) {
-    db.Companion.create(dataLogin, function (err) {
-        if (err) done(err);
-        else done();
-    })
-});
-
 describe('Login WebApp', function () {
+    before(function (done) {
+        db.Companion.create(dataLogin, function (err) {
+            if (err) done(err);
+            else done();
+        })
+    });
+
     it('POST /login should 200', function (done) {
         request
             .post('/login')
@@ -44,7 +44,7 @@ describe('Login WebApp', function () {
             .expect('Content-Length', 15)
             .end(done)
     });
-    
+
     it('POST /login should 401', function (done) {
         request
             .post('/login')
@@ -76,5 +76,12 @@ describe('Login Bracelet', function () {
             .post('/loginWithBracelet')
             .expect('Content-Length', 20)
             .expect(401, done);
+    });
+
+    after(function (done) {
+        mongoose.connection.db.dropCollection('companions', function (err) {
+            if (err) done(err);
+            done();
+        })
     });
 });
