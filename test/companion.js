@@ -3,6 +3,7 @@
  */
 
 var request = require('supertest');
+var assert = require('assert');
 var mongoose = require('mongoose');
 
 var app = require('../app.js');
@@ -65,6 +66,18 @@ describe('Companions', function () {
         request
             .get('/companions/lol/name')
             .expect(200, done);
+    });
+
+    it('POST /companions/import should return 200', function (done) {
+        request
+            .post('/companions/import')
+            .attach('my_file', __dirname + '/xlsx/workers.xlsx')
+            .expect(200)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.body.length !== 0);
+                done();
+            });
     });
 
     after(function (done) {
