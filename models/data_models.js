@@ -1,13 +1,10 @@
 /**
  * Created by superphung on 11/29/15.
  */
-var mongoose = require('mongoose');
-var bcrypt = require('bcrypt-nodejs');
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt-nodejs';
 
-var companionSchema;
-var taskSchema;
-
-companionSchema = mongoose.Schema({
+const companionSchema = mongoose.Schema({
     name: {type: String},
     chief: {type: Boolean, default: false},
     bracelet: {type: String},
@@ -17,7 +14,7 @@ companionSchema = mongoose.Schema({
     position: {type: String}
 });
 
-taskSchema = mongoose.Schema({
+const taskSchema = mongoose.Schema({
     project: {type: String},
     parent: {type: String},
     code: {type: String},
@@ -26,8 +23,8 @@ taskSchema = mongoose.Schema({
     child: {type: Array}
 });
 
-var Companion = mongoose.model('Companion', companionSchema);
-var Task = mongoose.model('Task', taskSchema);
+const Companion = mongoose.model('Companion', companionSchema);
+const Task = mongoose.model('Task', taskSchema);
 
 Companion.schema.pre('save', function (next) {
     var user = this;
@@ -43,5 +40,4 @@ Companion.schema.pre('save', function (next) {
     });
 });
 
-exports.Companion = Companion;
-exports.Task = Task;
+export {Companion, Task};
