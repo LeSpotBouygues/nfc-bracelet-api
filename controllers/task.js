@@ -55,7 +55,7 @@ function *importTask() {
     var pos = {};
     var data = [];
 
-    for (cell in worksheet) {
+    for (const cell in worksheet) {
         if (cell[0] === '!') continue;
         var value = worksheet[cell].v.trim();
         var idx = labels.indexOf(value);

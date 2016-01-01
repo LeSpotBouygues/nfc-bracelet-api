@@ -66,7 +66,7 @@ function *importCompanion() {
     var pos = {};
     var data = [];
 
-    for (cell in worksheet) {
+    for (const cell in worksheet) {
         var value;
 
         if (cell[0] === '!') continue;
