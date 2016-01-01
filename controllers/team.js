@@ -10,4 +10,19 @@ function *create() {
     this.body = yield db.Team.create(body);
 }
 
-export default {create};
+function *update() {
+    const body = this.request.body;
+    let team;
+    const labels = ['name', 'chief', 'companions', 'tasks'];
+    try {
+        team = yield db.Team.findById(this.params.idTeam).exec();
+    } catch (err) {
+    }
+    this.assert(team, 204);
+    labels.forEach(label => {
+        if (body[label]) team[label] = body[label];
+    });
+    this.body = yield team.save();
+}
+
+export default {create, update};
