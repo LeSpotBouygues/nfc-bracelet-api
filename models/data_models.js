@@ -23,8 +23,16 @@ const taskSchema = mongoose.Schema({
     child: {type: Array}
 });
 
+const teamSchema = mongoose.Schema({
+    name: {type: String},
+    chief: {type: mongoose.Schema.Types.ObjectId, ref: 'Companion'},
+    companions: [{type: mongoose.Schema.Types.ObjectId, ref: 'Companion'}],
+    tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}]
+});
+
 const Companion = mongoose.model('Companion', companionSchema);
 const Task = mongoose.model('Task', taskSchema);
+const Team = mongoose.model('Team', teamSchema);
 
 Companion.schema.pre('save', function (next) {
     var user = this;
@@ -40,4 +48,4 @@ Companion.schema.pre('save', function (next) {
     });
 });
 
-export {Companion, Task};
+export {Companion, Task, Team};
