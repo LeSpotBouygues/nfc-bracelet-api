@@ -10,6 +10,18 @@ function *create() {
     this.body = yield db.Team.create(body);
 }
 
+function *list() {
+    this.body = yield db.Team.find().exec();
+}
+
+function *getById() {
+    let team;
+    try {
+        team = yield db.Team.findById(this.params.idTeam).exec();
+    } catch (err) {}
+    this.body = team;
+}
+
 function *update() {
     const body = this.request.body;
     let team;
@@ -25,4 +37,4 @@ function *update() {
     this.body = yield team.save();
 }
 
-export default {create, update};
+export default {create, list, getById, update};

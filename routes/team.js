@@ -10,6 +10,8 @@ const router = koaRouter();
 const parseBody = koaBody();
 
 router.post('/teams', parseBody, team.create);
+router.get('/teams', team.list);
+router.get('/teams/:idTeam', team.getById);
 router.put('/teams/:idTeam', parseBody, team.update);
 
 app.use(router.routes());
