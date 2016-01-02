@@ -39,4 +39,16 @@ function *update() {
     this.body = yield team.save();
 }
 
-export default {create, list, getById, update};
+function *del() {
+    let team;
+    try {
+        team = yield db.Team.findById(this.params.idTeam).exec();
+    } catch (err) {}
+    this.assert(team, 400, 'team does not exist');
+    const user = yield db.Companion.findOne({_id: this.state.user.sub});
+    this.assert(user, 400, 'companion does not exist');
+    if (JSON.stringify(team.chief) !== JSON.stringify(user._id) && user.username !== 'admin') this.throw(401, 'not authorized to delete');
+    this.body = yield db.Team.remove({_id: this.params.idTeam}).exec();
+}
+
+export default {create, list, getById, update, del};
