@@ -45,6 +45,20 @@ function *getByName() {
     this.body = yield db.Companion.find({name: nameCandidate}).exec();
 }
 
+function *update() {
+    const body = this.request.body;
+    let companion;
+    const labels = ['name', 'bracelet', 'username', 'password', 'company', 'position'];
+    try {
+        companion = yield db.Companion.findById(this.params.idCompanion).exec();
+    } catch (err) {}
+    this.assert(companion, 400, 'user does not exist');
+    labels.forEach(label => {
+        if (body[label]) companion[label] = body[label];
+    });
+    this.body = yield companion.save();
+}
+
 function *importCompanion() {
 
     try {
@@ -92,4 +106,4 @@ function *importCompanion() {
     this.body = yield db.Companion.create(data);
 }
 
-export default {create, createToken, list, getById, getByName, importCompanion};
+export default {create, createToken, list, getById, getByName, update, importCompanion};

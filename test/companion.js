@@ -68,6 +68,27 @@ describe('Companions', function () {
             .expect(200, done);
     });
 
+    it('UPDATE /companions/:idCompanion should return 200', function (done) {
+        request
+            .put('/companions/' + this.id)
+            .send({
+                name: 'updateName'
+            })
+            .expect(200)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.body.name === 'updateName');
+                done();
+            });
+    });
+
+    it('UPDATE /companions/:idCompanion should return 400', function (done) {
+        request
+            .put('/companions/' + 123)
+            .expect('Content-Length', 19)
+            .expect(400, done);
+    });
+
     it('POST /companions/import should return 200', function (done) {
         request
             .post('/companions/import')
