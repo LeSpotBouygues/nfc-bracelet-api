@@ -2,13 +2,10 @@
  * Created by nana on 05/12/2015.
  */
 
-var auth = require('basic-auth');
-var bcrypt = require('bcrypt-nodejs');
+import auth from 'basic-auth';
+import bcrypt from 'bcrypt-nodejs';
 
-var db = require('../models/data_models');
-
-exports.webApp = webApp;
-exports.bracelet = bracelet;
+import * as db from '../models/data_models';
 
 function *webApp(next) {
     var user = auth(this);
@@ -26,3 +23,5 @@ function *bracelet(next) {
     this.assert(this.user, 401, 'user not found');
     yield next;
 }
+
+export default {webApp, bracelet};

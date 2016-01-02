@@ -2,9 +2,7 @@
  * Created by nana on 11/12/2015.
  */
 
-var xlsx = require('xlsx');
-
-exports.getWorksheet = getWorksheet;
+import xlsx from 'xlsx';
 
 function getWorksheet(filename) {
     return function (done) {
@@ -18,3 +16,5 @@ function getWorksheet(filename) {
         return done(null, worksheet);
     }
 }
+
+export default {getWorksheet};

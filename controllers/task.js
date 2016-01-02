@@ -2,15 +2,12 @@
  * Created by nana on 11/12/2015.
  */
 
-var fs = require('fs');
-var path = require('path');
-var xlsx = require('xlsx');
+import fs from 'fs';
+import path from 'path';
+import xlsx from 'xlsx';
 
-var file = require('../middleware/file');
-var db = require('../models/data_models.js');
-
-exports.getList = getList;
-exports.importTask = importTask;
+import file from '../middleware/file';
+import * as db from '../models/data_models.js';
 
 function getNestedChildren(arr, parent) {
     var out = [];
@@ -80,3 +77,5 @@ function *importTask() {
     yield db.Task.remove();
     this.body = yield db.Task.create(data);
 }
+
+export default {getList, importTask};

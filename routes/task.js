@@ -1,12 +1,13 @@
 /**
  * Created by nana on 11/12/2015.
  */
-var app = require('../app.js');
-var router = require('koa-router')();
-var parseBody = require('koa-body')();
-var parseMultipart = require('koa-body')({formidable: {uploadDir: __dirname + '/..'}, multipart: true});
+import app from '../app.js';
+import koaRouter from 'koa-router';
+import koaBody from 'koa-body';
+import task from '../controllers/task';
 
-var task = require('../controllers/task');
+const router = koaRouter();
+const parseMultipart = koaBody({formidable: {uploadDir: __dirname + '/..'}, multipart: true});
 
 router.get('/task', task.getList);
 router.post('/task/import', parseMultipart, task.importTask);

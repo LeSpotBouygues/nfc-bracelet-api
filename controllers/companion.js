@@ -1,19 +1,12 @@
 /**
  * Created by superphung on 11/29/15.
  */
-var fs = require('fs');
-var path = require('path');
-var jwt = require('jwt-simple');
+import fs from 'fs';
+import path from 'path';
+import jwt from 'jwt-simple';
 
-var file = require('../middleware/file');
-var db = require('../models/data_models');
-
-exports.create = create;
-exports.createToken = createToken;
-exports.list = list;
-exports.getById = getById;
-exports.getByName = getByName;
-exports.importCompanion = importCompanion;
+import file from '../middleware/file';
+import * as db from '../models/data_models';
 
 function *create() {
     var body = this.request.body;
@@ -98,3 +91,5 @@ function *importCompanion() {
     yield db.Companion.remove();
     this.body = yield db.Companion.create(data);
 }
+
+export default {create, createToken, list, getById, getByName, importCompanion};
