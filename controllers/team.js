@@ -41,7 +41,7 @@ function *update() {
         team = yield db.Team.findById(this.params.idTeam).exec();
     } catch (err) {
     }
-    this.assert(team, 204);
+    this.assert(team, 400, 'team does not exist');
     labels.forEach(label => {
         if (body[label]) team[label] = body[label];
     });
