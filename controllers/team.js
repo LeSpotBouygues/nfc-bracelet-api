@@ -24,6 +24,15 @@ function *getById() {
     this.body = team;
 }
 
+function *listCompanions() {
+    let team;
+    try {
+        team = yield db.Team.findById(this.params.idTeam).populate('companions').exec();
+    } catch (err) {}
+    this.assert(team, 400, 'team does not exist');
+    this.body = team.companions;
+}
+
 function *update() {
     const body = this.request.body;
     let team;
@@ -51,4 +60,4 @@ function *del() {
     this.body = yield db.Team.remove({_id: this.params.idTeam}).exec();
 }
 
-export default {create, list, getById, update, del};
+export default {create, list, listCompanions, getById, update, del};
