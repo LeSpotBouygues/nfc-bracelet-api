@@ -7,6 +7,8 @@ import * as db from '../models/data_models';
 function *create() {
     const body = this.request.body;
     this.assert(body.chief, 400, 'missing params');
+    const team = yield db.Team.findOne({chief: body.chief});
+    this.assert(!team, 400, 'chief already have a team');
     this.body = yield db.Team.create(body);
 }
 
