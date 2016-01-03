@@ -6,7 +6,6 @@ import bcrypt from 'bcrypt-nodejs';
 
 const companionSchema = mongoose.Schema({
     name: {type: String},
-    chief: {type: Boolean, default: false},
     bracelet: {type: String},
     username: {type: String},
     password: {type: String, select: false},
@@ -19,8 +18,9 @@ const taskSchema = mongoose.Schema({
     parent: {type: String},
     code: {type: String},
     name: {type: String},
-    niv: {type: Number},
-    child: {type: Array}
+    niv: {type: Number, default: 1},
+    child: {type: Array},
+    open: {type: Boolean, default: true}
 });
 
 const teamSchema = mongoose.Schema({

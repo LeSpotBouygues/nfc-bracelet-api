@@ -7,9 +7,15 @@ import koaBody from 'koa-body';
 import task from '../controllers/task';
 
 const router = koaRouter();
+const parseBody = koaBody();
 const parseMultipart = koaBody({formidable: {uploadDir: __dirname + '/..'}, multipart: true});
 
-router.get('/task', task.getList);
-router.post('/task/import', parseMultipart, task.importTask);
+router.post('/tasks', parseBody, task.create);
+router.get('/tasks', task.getList);
+router.get('/tasks/open', task.getList);
+router.get('/tasks/close', task.listClose);
+router.put('/tasks/:idTask', parseBody, task.update);
+router.delete('/tasks/:idTask', task.del);
+router.post('/tasks/import', parseMultipart, task.importTask);
 
 app.use(router.routes());

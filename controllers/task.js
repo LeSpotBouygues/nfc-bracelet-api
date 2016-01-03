@@ -9,33 +9,51 @@ import xlsx from 'xlsx';
 import file from '../middleware/file';
 import * as db from '../models/data_models.js';
 
-function getNestedChildren(arr, parent) {
-    var out = [];
-    for(var i in arr) {
-        if(arr[i].parent == parent) {
-            var children = getNestedChildren(arr, arr[i].code);
-
-            if(children.length) {
-                arr[i].child = children
-            }
-            out.push(arr[i])
-        }
-    }
-    return out
+function *create() {
+    const body = this.request.body;
+    this.assert(body.name, 400, 'missing params');
+    this.body = yield db.Task.create(body);
 }
 
 function *getList() {
-    var AllProjects = yield db.Task.find({niv: 1}).exec();
+    var AllProjects = yield db.Task.find({niv: 1, open: true}).exec();
     var tasks = yield db.Task.find().exec();
 
     var data = [];
 
     AllProjects.forEach(function (Project, index) {
         data.push(Project);
-        data[index].child = getNestedChildren(tasks, Project.code);
+        if (Project.code) data[index].child = getNestedChildren(tasks, Project.code, true);
     });
 
     this.body = data;
+}
+
+function *listClose() {
+    this.body = yield db.Task.find({open: false}).exec();
+}
+
+function *update() {
+    const body = this.request.body;
+    let task;
+    const labels = ['project', 'parent', 'code', 'name', 'niv', 'open'];
+    try {
+        task = yield db.Task.findById(this.params.idTask).exec();
+    } catch (err) {}
+    this.assert(task, 400, 'task does not exist');
+    labels.forEach(label => {
+        if (body[label]) task[label] = body[label];
+    });
+    this.body = yield task.save();
+}
+
+function *del() {
+    let task;
+    try {
+        task = yield db.Task.findById(this.params.idTask);
+    } catch (err) {}
+    this.assert(task, 400, 'task does not exist');
+    this.body = yield db.Task.remove({_id : this.params.idTask}).exec();
 }
 
 function *importTask() {
@@ -78,4 +96,19 @@ function *importTask() {
     this.body = yield db.Task.create(data);
 }
 
-export default {getList, importTask};
+export default {create, getList, listClose, update, del, importTask};
+
+function getNestedChildren(arr, parent, isOpen) {
+    var out = [];
+    for(var i in arr) {
+        if(arr[i].parent == parent && arr[i].open === isOpen) {
+            var children = getNestedChildren(arr, arr[i].code, isOpen);
+
+            if(children.length) {
+                arr[i].child = children
+            }
+            out.push(arr[i])
+        }
+    }
+    return out
+}
