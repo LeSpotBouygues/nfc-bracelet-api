@@ -10,7 +10,8 @@ const companionSchema = mongoose.Schema({
     username: {type: String},
     password: {type: String, select: false},
     company: {type: String},
-    position: {type: String}
+    position: {type: String},
+    tasksInProgress: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}]
 });
 
 const taskSchema = mongoose.Schema({

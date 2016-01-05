@@ -14,6 +14,8 @@ router.post('/tasks', parseBody, task.create);
 router.get('/tasks', task.getList);
 router.get('/tasks/open', task.getList);
 router.get('/tasks/close', task.listClose);
+router.get('/tasks/:idChief/affected', task.listAffected);
+router.get('/tasks/:idChief/inProgress', task.listInProgress);
 router.put('/tasks/:idTask', parseBody, task.update);
 router.delete('/tasks/:idTask', task.del);
 router.post('/tasks/import', parseMultipart, task.importTask);

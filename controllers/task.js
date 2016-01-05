@@ -33,6 +33,32 @@ function *listClose() {
     this.body = yield db.Task.find({open: false}).exec();
 }
 
+function *listAffected() {
+    let team;
+    try {
+        team = yield db.Team.findOne({chief: this.params.idChief}).populate('tasks').exec();
+    } catch (err) {}
+    this.assert(team, 400, 'chief does not have team');
+    this.body = team.tasks;
+}
+
+function *listInProgress() {
+    let team;
+    try {
+        team = yield db.Team.findOne({chief: this.params.idChief}).populate('companions').exec();
+    } catch (err) {}
+    this.assert(team, 400, 'chief does not have team');
+    const promises = yield team.companions.map(companion => {
+       return new Promise(function (resolve, reject) {
+           db.Task.populate(companion, {path: 'tasksInProgress'}, function (err, data) {
+               if (err) reject(err);
+               else resolve(data.tasksInProgress);
+           });
+       });
+    });
+    this.body = [].concat.apply([], promises);
+}
+
 function *update() {
     const body = this.request.body;
     let task;
@@ -96,7 +122,7 @@ function *importTask() {
     this.body = yield db.Task.create(data);
 }
 
-export default {create, getList, listClose, update, del, importTask};
+export default {create, getList, listClose, listAffected, listInProgress, update, del, importTask};
 
 function getNestedChildren(arr, parent, isOpen) {
     var out = [];

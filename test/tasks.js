@@ -6,12 +6,58 @@ var request = require('supertest');
 var assert = require('assert');
 var mongoose = require('mongoose');
 
+var db = require('../models/data_models');
+
 var app = require('../app.js');
 require('../index');
 var server = app.listen();
 request = request.agent(server);
 
+var dataCompanion = [
+    {
+        name: 'chief'
+    },
+    {
+        name: 'companion',
+        tasksInProgress: []
+    }
+];
+
+var dataTask = [
+    {
+        name: 'task1'
+    },
+    {
+        name: 'task2'
+    }
+];
+
 describe('Tasks', function () {
+    before(function (done) {
+        db.Companion.create(dataCompanion, function (err, companions) {
+            if (err) return done(err);
+            this.idChief = companions[0]._id;
+            db.Task.create(dataTask, function (err, tasks) {
+                if (err) return done(err);
+                companions[1].tasksInProgress.push(tasks[0]._id);
+                companions[1].save(function (err) {
+                    if (err) return done(err);
+                    var dataTeam = [{
+                        chief: companions[0]._id,
+                        companions: [companions[1]._id],
+                        tasks: tasks.map(function (task) {
+                            return task._id
+                        })
+                    }];
+                    db.Team.create(dataTeam, function (err) {
+                        if (err) return done(err);
+                        done();
+                    });
+                });
+            });
+        }.bind(this));
+    });
+
     it('POST /tasks should return 400', function (done) {
         request
             .post('/tasks')
@@ -39,7 +85,6 @@ describe('Tasks', function () {
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);
-                assert(res.body[0].name === 'newTask');
                 done();
             });
     });
@@ -50,7 +95,41 @@ describe('Tasks', function () {
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);
-                assert(res.body.length === 0);
+                done();
+            });
+    });
+
+    it('GET /tasks/:idChief/affected return 400', function (done) {
+        request
+            .get('/tasks/' + 123 + '/affected')
+            .expect(400, done);
+    });
+
+    it('GET /tasks/:idChief/affected return 200', function (done) {
+        request
+            .get('/tasks/' + this.idChief + '/affected')
+            .expect(200)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.body.length === 2);
+                done();
+            });
+    });
+
+    it('GET /tasks/:idChief/inProgress should return 400', function (done) {
+        request
+            .get('/tasks/' + 123 + '/inProgress')
+            .expect(400, done);
+    });
+
+    it('GET /tasks/:idChief/inProgress should return 200', function (done) {
+        request
+            .get('/tasks/' + this.idChief + '/inProgress')
+            .expect(200)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.body.length === 1);
+                assert(res.body[0].name === 'task1');
                 done();
             });
     });
@@ -103,8 +182,14 @@ describe('Tasks', function () {
 
     after(function (done) {
         mongoose.connection.db.dropCollection('tasks', function (err) {
-            if (err) done(err);
-            done();
-        })
+            if (err) return done(err);
+            mongoose.connection.db.dropCollection('teams', function (err) {
+                if (err) return done(err);
+                mongoose.connection.db.dropCollection('companions', function (err) {
+                    if (err) return done(err);
+                    done();
+                });
+            });
+        });
     });
 });
