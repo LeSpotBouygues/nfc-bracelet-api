@@ -23,9 +23,15 @@ var dataLogin = [
 
 describe('Login WebApp', function () {
     before(function (done) {
-        db.Companion.create(dataLogin, function (err) {
-            if (err) done(err);
-            else done();
+        db.Companion.create(dataLogin, function (err, companions) {
+            if (err) return done(err);
+            var dataTeam = [{
+                chief: companions[0]._id
+            }];
+            db.Team.create(dataTeam, function (err) {
+                if (err) return done(err);
+                done();
+            });
         })
     });
 
@@ -80,8 +86,11 @@ describe('Login Bracelet', function () {
 
     after(function (done) {
         mongoose.connection.db.dropCollection('companions', function (err) {
-            if (err) done(err);
-            done();
+            if (err) return done(err);
+            mongoose.connection.db.dropCollection('teams', function (err) {
+                if (err) return done(err);
+                done();
+            });
         })
     });
 });

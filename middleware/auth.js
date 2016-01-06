@@ -21,6 +21,8 @@ function *bracelet(next) {
     var idBracelet = this.request.headers.authorization;
     this.user = yield db.Companion.findOne({bracelet: idBracelet});
     this.assert(this.user, 401, 'user not found');
+    var team = yield db.Team.findOne({chief: this.user._id}).exec();
+    this.assert(team, 401, 'user is not chief');
     yield next;
 }
 
