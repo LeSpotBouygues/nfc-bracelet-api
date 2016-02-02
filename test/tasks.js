@@ -25,10 +25,10 @@ var dataCompanion = [
 
 var dataTask = [
     {
-        name: 'task1'
+        designation: 'task1'
     },
     {
-        name: 'task2'
+        designation: 'task2'
     }
 ];
 
@@ -58,22 +58,15 @@ describe('Tasks', function () {
         }.bind(this));
     });
 
-    it('POST /tasks should return 400', function (done) {
-        request
-            .post('/tasks')
-            .expect('Content-Length', 14)
-            .expect(400, done);
-    });
-
     it('POST /tasks should return 200', function (done) {
         request
             .post('/tasks')
             .send({
-                name: 'newTask'
+                designation: 'newTask'
             })
             .end(function (err, res) {
                 assert(err === null);
-                assert(res.body.name === 'newTask');
+                assert(res.body.designation === 'newTask');
                 this.idTask = res.body._id;
                 done();
             }.bind(this));
@@ -129,7 +122,7 @@ describe('Tasks', function () {
             .end(function (err, res) {
                 assert(err === null);
                 assert(res.body.length === 1);
-                assert(res.body[0].name === 'task1');
+                assert(res.body[0].designation === 'task1');
                 done();
             });
     });
@@ -145,12 +138,12 @@ describe('Tasks', function () {
         request
             .put('/tasks/' + this.idTask)
             .send({
-                name: 'newTaskUpdate'
+                designation: 'newTaskUpdate'
             })
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);
-                assert(res.body.name === 'newTaskUpdate');
+                assert(res.body.designation === 'newTaskUpdate');
                 done();
             });
     });
@@ -170,8 +163,8 @@ describe('Tasks', function () {
 
     it('POST /tasks/import should return 200', function (done) {
         request
-            .post('/tasks/import')
-            .attach('my_file', __dirname + '/xlsx/tasks.xlsx')
+            .post('/tasks/importData')
+            .attach('my_file', __dirname + '/xlsx/newImportTasks.xlsx')
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);
