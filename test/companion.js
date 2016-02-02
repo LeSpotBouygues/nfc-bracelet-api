@@ -72,12 +72,12 @@ describe('Companions', function () {
         request
             .put('/companions/' + this.id)
             .send({
-                name: 'updateName'
+                firstName: 'updateName'
             })
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);
-                assert(res.body.name === 'updateName');
+                assert(res.body.firstName === 'updateName');
                 done();
             });
     });
@@ -91,8 +91,8 @@ describe('Companions', function () {
 
     it('POST /companions/import should return 200', function (done) {
         request
-            .post('/companions/import')
-            .attach('my_file', __dirname + '/xlsx/workers.xlsx')
+            .post('/companions/importData')
+            .attach('my_file', __dirname + '/xlsx/newImportCompanions.xlsx')
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);

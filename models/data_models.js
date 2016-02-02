@@ -5,23 +5,29 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt-nodejs';
 
 const companionSchema = mongoose.Schema({
-    name: {type: String},
+    idPayrol: {type: String, select: false},
+    idBYCN: {type: String, select: false},
+    firstName: {type: String},
+    lastName: {type: String},
+    aliasName: {type: String},
     bracelet: {type: String},
     username: {type: String},
     password: {type: String, select: false},
+    nationality: {type: String},
     company: {type: String},
     position: {type: String},
-    tasksInProgress: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}]
+    workPermit: {type: String},
+    tasksInProgress: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}],
+    expirationDate: {type: Date},
+    vacationStart: {type: Date},
+    vacationEnd: {type: Date}
 });
 
 const taskSchema = mongoose.Schema({
-    project: {type: String},
-    parent: {type: String},
-    code: {type: String},
-    name: {type: String},
-    niv: {type: Number, default: 1},
-    child: {type: Array},
-    open: {type: Boolean, default: true}
+    idSAP: {type: String, select: false},
+    SapCode: {type: String, select: false},
+    designation: {type: String},
+    IdentificationPointageMo: {type: String}
 });
 
 const teamSchema = mongoose.Schema({
