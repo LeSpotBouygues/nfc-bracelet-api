@@ -13,5 +13,6 @@ require('./routes/login');
 require('./routes/companion');
 require('./routes/task');
 require('./routes/team');
+require('./routes/history');
 
 app.listen(process.env.PORT || 3000);

@@ -37,9 +37,16 @@ const teamSchema = mongoose.Schema({
     tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}]
 });
 
+const historySchema = mongoose.Schema({
+    companion: {type: mongoose.Schema.Types.ObjectId, ref: 'Companion'},
+    taskInProgress: {type: mongoose.Schema.Types.ObjectId, ref: 'Task'},
+    date: {type: Date}
+});
+
 const Companion = mongoose.model('Companion', companionSchema);
 const Task = mongoose.model('Task', taskSchema);
 const Team = mongoose.model('Team', teamSchema);
+const History = mongoose.model('History', historySchema);
 
 Companion.schema.pre('save', function (next) {
     var user = this;
@@ -55,4 +62,4 @@ Companion.schema.pre('save', function (next) {
     });
 });
 
-export {Companion, Task, Team};
+export {Companion, Task, Team, History};
