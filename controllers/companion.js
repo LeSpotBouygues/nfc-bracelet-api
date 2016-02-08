@@ -10,7 +10,6 @@ import * as db from '../models/data_models';
 
 function *create() {
     var body = this.request.body;
-    this.assert(body.name, 400, 'missing params');
     if (body.username) {
         var companion = yield db.Companion.findOne({username: body.username}).exec();
         this.assert(!companion, 409, 'duplicate user');

@@ -12,13 +12,6 @@ var server = app.listen();
 request = request.agent(server);
 
 describe('Companions', function () {
-    it('POST /companions should 400', function (done) {
-        request
-            .post('/companions')
-            .expect('Content-Type', 'text/plain; charset=utf-8')
-            .expect(400, done);
-    });
-
     it('POST /companions should 200', function (done) {
         request
             .post('/companions')
