@@ -19,7 +19,7 @@ function *list() {
 function *getById() {
     let team;
     try {
-        team = yield db.Team.findById(this.params.idTeam).exec();
+        team = yield db.Team.findById(this.params.idTeam).populate('companions tasks').exec();
     } catch (err) {}
     this.body = team;
 }
