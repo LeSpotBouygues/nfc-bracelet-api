@@ -70,7 +70,7 @@ function *listInProgress() {
 function *update() {
     const body = this.request.body;
     let task;
-    const labels = ['project', 'parent', 'code', 'name', 'niv', 'open', 'designation'];
+    const labels = ['parent', 'code', 'name', 'niv', 'open', 'label_short', 'label_long', 'master', 'masterCode'];
     try {
         task = yield db.Task.findById(this.params.idTask).exec();
     } catch (err) {}

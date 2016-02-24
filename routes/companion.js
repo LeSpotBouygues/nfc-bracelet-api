@@ -20,6 +20,6 @@ router.get('/companions', companion.list);
 router.get('/companions/:idCompanion', companion.getById);
 router.get('/companions/:name/name', companion.getByName);
 router.put('/companions/:idCompanion', parseBody, companion.update);
-router.post('/companions/importData', parseMultipart, file.parse(companionsLabels, 'prénom'), companion.createFromFile);
+router.post('/companions/importData', parseMultipart, file.parse(companionsLabels, 'ressource_prenom'), companion.createFromFile);
 
 app.use(router.routes());

@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/LeSpotBouyguesEpitech/nfc-bracelet-api#readme",
   "dependencies": {
+    "aws-sdk": "^2.2.37",
     "basic-auth": "^1.0.3",
     "bcrypt-nodejs": "0.0.3",
     "jwt-simple": "^0.4.0",

@@ -8,7 +8,7 @@ function *create() {
     const body = this.request.body;
     this.assert(body.companion && body.taskInProgress && body.date, 400, 'missing params');
 
-    let date, companion, task;
+    let date, task;
 
     try {
         date = body.date.split(':');
@@ -33,10 +33,33 @@ function *create() {
     history.companion = body.companion;
     history.taskInProgress = body.taskInProgress;
     history.date = new Date(date[0], date[1] - 1, date[2]);
+    history.duration = body.duration;
     if (history._id) history = yield history.save();
     else history = yield db.History.create(history);
 
     this.body = history;
 }
 
-export default {create};
+function *getRange() {
+    const body = this.request.body;
+
+    let from, to;
+
+    try {
+        from = body.from.split(':');
+        to = body.to.split(':');
+        this.assert(from.length === 3 && to.length === 3, 400, 'date wrong format');
+        from = from.map(n => parseInt(n));
+        to = to.map(n => parseInt(n));
+    } catch (e) {
+        this.throw(400, 'date wrong format');
+    }
+    this.body = yield db.History.find({
+        date: {
+            '$gte': new Date(from[0], from[1] - 1, from[2]),
+            '$lte': new Date(to[0], to[1] - 1, to[2])
+        }
+    }).exec();
+}
+
+export default {create, getRange};

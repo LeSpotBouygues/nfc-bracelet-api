@@ -85,7 +85,7 @@ describe('Companions', function () {
     it('POST /companions/import should return 200', function (done) {
         request
             .post('/companions/importData')
-            .attach('my_file', __dirname + '/xlsx/newImportCompanions.xlsx')
+            .attach('my_file', __dirname + '/xlsx/lastCompanions.xlsx')
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);

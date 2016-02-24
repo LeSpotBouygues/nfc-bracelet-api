@@ -15,19 +15,30 @@ const companionSchema = mongoose.Schema({
     password: {type: String, select: false},
     nationality: {type: String},
     company: {type: String},
+    category: {type: String},
     position: {type: String},
     workPermit: {type: String},
     tasksInProgress: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}],
     expirationDate: {type: Date},
     vacationStart: {type: Date},
-    vacationEnd: {type: Date}
+    vacationEnd: {type: Date},
+    refPrevPoint: {type: String},
+    refResource: {type: String},
+    refCompany: {type: String},
+    refCompanyCode: {type: String}
+
 });
 
 const taskSchema = mongoose.Schema({
-    idSAP: {type: String, select: false},
-    SapCode: {type: String, select: false},
-    designation: {type: String},
-    IdentificationPointageMo: {type: String}
+    code: {type: String},
+    label_short: {type: String},
+    label_long: {type: String},
+    parent: {type: String},
+    niv: {type: Number},
+    master: {type: String},
+    masterCode: {type: String},
+    open: {type: Boolean, default: true},
+    child: {type: Array}
 });
 
 const teamSchema = mongoose.Schema({
@@ -40,7 +51,8 @@ const teamSchema = mongoose.Schema({
 const historySchema = mongoose.Schema({
     companion: {type: mongoose.Schema.Types.ObjectId, ref: 'Companion'},
     taskInProgress: {type: mongoose.Schema.Types.ObjectId, ref: 'Task'},
-    date: {type: Date}
+    date: {type: Date},
+    duration: {type: Number}
 });
 
 const Companion = mongoose.model('Companion', companionSchema);

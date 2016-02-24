@@ -25,10 +25,10 @@ var dataCompanion = [
 
 var dataTask = [
     {
-        designation: 'task1'
+        label_short: 'task1'
     },
     {
-        designation: 'task2'
+        label_short: 'task2'
     }
 ];
 
@@ -62,11 +62,11 @@ describe('Tasks', function () {
         request
             .post('/tasks')
             .send({
-                designation: 'newTask'
+                label_short: 'newTask'
             })
             .end(function (err, res) {
                 assert(err === null);
-                assert(res.body.designation === 'newTask');
+                assert(res.body.label_short === 'newTask');
                 this.idTask = res.body._id;
                 done();
             }.bind(this));
@@ -122,7 +122,7 @@ describe('Tasks', function () {
             .end(function (err, res) {
                 assert(err === null);
                 assert(res.body.length === 1);
-                assert(res.body[0].designation === 'task1');
+                assert(res.body[0].label_short === 'task1');
                 done();
             });
     });
@@ -138,12 +138,12 @@ describe('Tasks', function () {
         request
             .put('/tasks/' + this.idTask)
             .send({
-                designation: 'newTaskUpdate'
+                label_short: 'newTaskUpdate'
             })
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);
-                assert(res.body.designation === 'newTaskUpdate');
+                assert(res.body.label_short === 'newTaskUpdate');
                 done();
             });
     });
@@ -164,7 +164,7 @@ describe('Tasks', function () {
     it('POST /tasks/import should return 200', function (done) {
         request
             .post('/tasks/importData')
-            .attach('my_file', __dirname + '/xlsx/newImportTasks.xlsx')
+            .attach('my_file', __dirname + '/xlsx/lastTasks.xlsx')
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);

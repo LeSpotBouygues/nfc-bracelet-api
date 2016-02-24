@@ -13,5 +13,6 @@ const router = koaRouter();
 const parseBody = koaBody();
 
 router.post('/history', parseBody, history.create);
+router.post('/history/fromRange', parseBody, history.getRange);
 
 app.use(router.routes());

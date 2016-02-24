@@ -20,6 +20,7 @@ router.get('/tasks/:idChief/affected', task.listAffected);
 router.get('/tasks/:idChief/inProgress', task.listInProgress);
 router.put('/tasks/:idTask', parseBody, task.update);
 router.delete('/tasks/:idTask', task.del);
-router.post('/tasks/importData', parseMultipart, file.parse(tasksLabels, 'id interne'), task.createFromFile);
+router.post('/tasks/importData', parseMultipart, file.parse(tasksLabels, 'oia_oid_code_interne'), task.createFromFile);
+router.post('/export', parseBody, file.exportPointage);
 
 app.use(router.routes());
