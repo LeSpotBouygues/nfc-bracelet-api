@@ -8,7 +8,7 @@ function *create() {
     const body = this.request.body;
     this.assert(body.companion && body.taskInProgress && body.date, 400, 'missing params');
 
-    let date, task;
+    let date;
 
     try {
         date = body.date.split(':');
@@ -18,12 +18,14 @@ function *create() {
         this.throw(400, 'date wrong format');
     }
     try {
-        yield db.Companion.findById(body.companion).exec();
+        const companion = yield db.Companion.findById(body.companion).exec();
+        if (!companion) this.throw(400, 'user does not exist');
     } catch (e) {
         this.throw(400, 'user does not exist');
     }
     try {
-        yield db.Task.findById(body.taskInProgress).exec();
+        const task = yield db.Task.findById(body.taskInProgress).exec();
+        if (!task) this.throw(400, 'task does not exist');
     } catch (e) {
         this.throw(400, 'task does not exist');
     }
