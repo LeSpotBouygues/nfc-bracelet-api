@@ -13,13 +13,13 @@ function *create() {
 }
 
 function *list() {
-    this.body = yield db.Team.find().exec();
+    this.body = yield db.Team.find().populate('companions tasks chief').exec();
 }
 
 function *getById() {
     let team;
     try {
-        team = yield db.Team.findById(this.params.idTeam).populate('companions tasks').exec();
+        team = yield db.Team.findById(this.params.idTeam).populate('companions tasks chief').exec();
     } catch (err) {}
     this.body = team;
 }
