@@ -14,6 +14,8 @@ router.post('/teams', parseBody, team.create);
 router.get('/teams', team.list);
 router.get('/teams/:idTeam', team.getById);
 router.get('/teams/:idTeam/companions', team.listCompanions);
+router.put('/teams/:idTeam/addCompanion', parseBody, team.addCompanion);
+router.put('/teams/:idTeam/removeCompanion', parseBody, team.removeCompanion);
 router.put('/teams/:idTeam', parseBody, team.update);
 router.delete('/teams/:idTeam', jwt({secret: 'secret'}), team.del);
 

@@ -33,6 +33,38 @@ function *listCompanions() {
     this.body = team.companions;
 }
 
+function *addCompanion() {
+    const body = this.request.body;
+    this.assert(body.companion, 400, 'missing params');
+    let team, companion;
+    try {
+        team = yield db.Team.findById(this.params.idTeam).exec();
+        companion = yield db.Companion.findById(body.companion).exec();
+    } catch (err) {}
+    this.assert(team, 400, 'team does not exist');
+    this.assert(companion, 400, 'companion does not exist');
+    const idx = team.companions.indexOf(body.companion);
+    if (idx !== -1) this.throw(400, 'companion already in the team');
+    team.companions.push(body.companion);
+    this.body = yield team.save();
+}
+
+function *removeCompanion() {
+    const body = this.request.body;
+    this.assert(body.companion, 400, 'missing params');
+    let team, companion;
+    try {
+        team = yield db.Team.findById(this.params.idTeam).exec();
+        companion = yield db.Companion.findById(body.companion).exec();
+    } catch (err) {}
+    this.assert(team, 400, 'team does not exist');
+    this.assert(companion, 400, 'companion does not exist');
+    const idx = team.companions.indexOf(body.companion);
+    if (idx === -1) this.throw(400, 'companion is not in the team');
+    team.companions.splice(idx, 1);
+    this.body = yield team.save();
+}
+
 function *update() {
     const body = this.request.body;
     let team;
@@ -60,4 +92,4 @@ function *del() {
     this.body = yield db.Team.remove({_id: this.params.idTeam}).exec();
 }
 
-export default {create, list, listCompanions, getById, update, del};
+export default {create, list, listCompanions, addCompanion, removeCompanion, getById, update, del};

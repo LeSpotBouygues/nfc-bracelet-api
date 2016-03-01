@@ -24,6 +24,9 @@ var dataCompanion = [
     },
     {
         name: 'companion2'
+    },
+    {
+        name: 'companion3'
     }
 ];
 
@@ -32,7 +35,8 @@ describe('Teams', function () {
         db.Companion.create(dataCompanion, function (err, res) {
             if (err) return done(err);
             this.Chief = res[0];
-            this.companions = res.slice(1).map(function (companion) {
+            this.companionToAdd = res[1];
+            this.companions = res.slice(2).map(function (companion) {
                 return companion._id;
             });
             done();
@@ -110,6 +114,140 @@ describe('Teams', function () {
         request
             .get('/teams/' + 123 + '/companions')
             .expect(400, done);
+    });
+
+    it('PUT /teams/:id/addCompanion should return 400', function (done) {
+        request
+            .put('/teams/' + 123 + '/addCompanion')
+            .send({
+                companion: 123
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'team does not exist');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/addCompanion should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/addCompanion')
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'missing params');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/addCompanion should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/addCompanion')
+            .send({
+                companion: 123
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'companion does not exist');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/addCompanion should return 200', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/addCompanion')
+            .send({
+                companion: this.companionToAdd._id
+            })
+            .expect(200)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.body.companions.length === 3);
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/addCompanion should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/addCompanion')
+            .send({
+                companion: this.companionToAdd._id
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'companion already in the team');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/removeCompanion should return 400', function (done) {
+        request
+            .put('/teams/' + 123 + '/removeCompanion')
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'missing params');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/removeCompanion should return 400', function (done) {
+        request
+            .put('/teams/' + 123 + '/removeCompanion')
+            .send({
+                companion: 123
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'team does not exist');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/removeCompanion should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/removeCompanion')
+            .send({
+                companion: 123
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'companion does not exist');
+                done()
+            });
+    });
+
+    it('PUT /teams/:id/removeCompanion should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/removeCompanion')
+            .send({
+                companion: this.Chief._id
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'companion is not in the team');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/removeCompanion should return 200', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/removeCompanion')
+            .send({
+                companion: this.companionToAdd._id
+            })
+            .expect(200)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.body.companions.length === 2);
+                done();
+            });
     });
 
     it('PUT /teams/:id should return 200', function (done) {
