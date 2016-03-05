@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import xlsx from 'xlsx';
 import zlib from 'zlib';
+import archiver from 'archiver';
 
 import AWS from '../config/aws';
 import * as db from '../models/data_models';
@@ -84,18 +85,6 @@ function parse(labels, start) {
     }
 }
 
-function Workbook() {
-    if(!(this instanceof Workbook)) return new Workbook();
-    this.SheetNames = [];
-    this.Sheets = {};
-}
-
-function fill(ws, value, type, row, col) {
-    const cell = {v: value, t: type};
-    const cell_ref = xlsx.utils.encode_cell({r: row, c: col});
-    ws[cell_ref] = cell;
-}
-
 function getISOdate(date) {
     const year = date.getFullYear().toString();
     let month = date.getMonth();
@@ -110,63 +99,33 @@ function getISOdate(date) {
     return year + month + day;
 }
 
-function fillSheet(history, start, end) {
-    const header = [
-        'Référentiel maitre données Pré-pointage',
-        'Code Nature Enregistrement',
-        'Composantes de pré-pointage envoyées',
-        'Date de Début Amplitude',
-        'Date de fin Amplitude',
-        'Référentiel Maitre des Sociétés juridiques',
-        'Code Société Juridique'
-    ];
-
-    const headerTIA = [
-        'Référentiel maitre données Pré-pointage',
-        'Code Nature Enregistrement',
-        'Référenciel maitre Ressource',
-        'Catégorie ressource',
-        'Code Ressource',
-        'Référenciel maitre Finance',
-        'Code interne Tâche',
-        'Pré-pointage',
-        'Valeur'
-    ];
-
-    var ws = {};
-
-    header.forEach(function (label, index) {
-        fill(ws, label, 's', 0, index);
-    });
-    fill(ws, history[0].companion.refPrevPoint, 's', 1, 0);
-    fill(ws, 'ENT', 's', 1, 1);
-    fill(ws, 'TIA', 's', 1, 2);
-    fill(ws, getISOdate(start), 's', 1, 3);
-    fill(ws, getISOdate(end), 's', 1, 4);
-    fill(ws, history[0].companion.refCompany, 's', 1, 5);
-    fill(ws, history[0].companion.refCompanyCode, 's', 1, 6);
-
-    headerTIA.forEach(function (label, index) {
-        fill(ws, label, 's', 3, index)
-    });
-
-    history.forEach(function (h, index) {
+function fillCsv(history, start, end) {
+    let template =
+        getData(history[0].companion.refPrevPoint) + '¤¤' +
+        'ENT¤¤' +
+        'TIA¤¤' +
+        getISOdate(start) + '¤¤' +
+        getISOdate(end) + '¤¤' +
+        getData(history[0].companion.refCompany) + '¤¤' +
+        getData(history[0].companion.refCompanyCode) + '¤¤¤¤¤¤¤¤¤¤\n';
+    history.forEach(h => {
         if (!h.date) return;
-        const row = 4+index;
-
-        fill(ws, h.companion.refPrevPoint, 's', row, 0);
-        fill(ws, 'TIA', 's', row, 1);
-        fill(ws, h.companion.refResource, 's', row, 2);
-        fill(ws, h.companion.category, 's', row, 3);
-        fill(ws, h.companion.idPayrol, 's', row, 4);
-        //fill(ws, h.companion.refCompany, 's', row, 5);
-        fill(ws, h.taskInProgress.code, 's', row, 6);
-        fill(ws, getISOdate(h.date), 's', row, 7);
-        fill(ws, h.duration, 'n', row, 8);
+        template +=
+            getData(h.companion.refPrevPoint) + '¤¤' +
+            'TIA¤¤' +
+            getData(h.companion.refResource) + '¤¤' +
+            getData(h.companion.category) + '¤¤' +
+            getData(h.companion.idPayrol) + '¤¤' +
+            getISOdate(h.date) + '¤¤' +
+            'EDIFICE¤¤' +
+            getData(h.taskInProgress.code) + '¤¤' +
+            getData(h.duration) + '¤¤¤¤¤¤\n';
     });
+    return template;
 
-    ws['!ref'] = xlsx.utils.encode_range({s: {r: 0, c: 0}, e: {r: 3+history.length, c: 8}});
-    return ws;
+    function getData(data) {
+        return data ? data : '¤¤';
+    }
 }
 
 function *exportPointage() {
@@ -222,27 +181,32 @@ function *exportPointage() {
         });
     });
 
-    const urls = [];
-    histFiltered.forEach((h,idx) => {
-        const ws_name = "SheetJS" + idx;
-        const wb = new Workbook(), ws = fillSheet(h, start, end);
-        wb.SheetNames.push(ws_name);
-        wb.Sheets[ws_name] = ws;
-        xlsx.writeFile(wb, idx + '.xlsx', {bookType:'xlsx', bookSST:true, type: 'binary'});
-        let S3body = fs.createReadStream(idx + '.xlsx');
-        const key = new Date().getTime().toString() + '.xlsx';
+    const files = [];
+    histFiltered.forEach((h) => {
+        const file = `${h[0].companion.refCompany}.csv`;
+        files.push(file);
+        fs.writeFileSync(file, fillCsv(h, start, end));
+    });
+    const zip = `pre-pointage-${Date.now().toString()}.zip`;
+    const output = fs.createWriteStream(zip);
+    const archive = archiver('zip');
+
+    archive.pipe(output);
+    files.forEach(f => archive.append(fs.createReadStream(f), {name : f}));
+    archive.finalize();
+
+    output.on('close', () => {
+        files.forEach(f => fs.unlinkSync(f));
         let S3 = new AWS.S3({
             params: {
                 Bucket: 'bouygues-csv',
-                Key: key
+                Key: zip
             }
         });
-        S3.upload({Body: S3body}).
-        on('httpUploadProgress', function(evt) { console.log(evt); }).
-        send(function(err, data) { console.log(err, data) });
-        urls.push('https://s3-eu-west-1.amazonaws.com/bouygues-csv/' + key);
+        S3.upload({Body: fs.createReadStream(zip)}, () => fs.unlinkSync(zip));
     });
-    this.body = {urls};
+
+    this.body = {url: 'https://s3-eu-west-1.amazonaws.com/bouygues-csv/' + zip};
 }
 
 export default {parse, exportPointage, getWorksheet};
