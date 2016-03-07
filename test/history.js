@@ -65,7 +65,7 @@ describe('History', function () {
             .post('/history')
             .send({
                 companion: '123',
-                taskInProgress: '123',
+                taskInProgress: [{id:'123', duration: 123}],
                 date: '2016:02:07'
             })
             .expect(400)
@@ -81,7 +81,7 @@ describe('History', function () {
             .post('/history')
             .send({
                 companion: this.idCompanion,
-                taskInProgress: '123',
+                taskInProgress: [{id: '123', duration: 123}],
                 date: '2016:02:07'
             })
             .expect(400)
@@ -97,7 +97,7 @@ describe('History', function () {
             .post('/history')
             .send({
                 companion: this.idCompanion,
-                taskInProgress: this.idTask,
+                taskInProgress: [{id: this.idTask}],
                 date: '20160207'
             })
             .expect(400)
@@ -113,13 +113,13 @@ describe('History', function () {
             .post('/history')
             .send({
                 companion: this.idCompanion,
-                taskInProgress: this.idTask,
+                taskInProgress: [{id: this.idTask, duration: 123}, {id: this.idTask, duration: 123}],
                 date: '2016:02:07'
             })
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);
-                assert(JSON.stringify(res.body.companion) == JSON.stringify(this.idCompanion));
+                assert(JSON.stringify(res.body[0].companion) == JSON.stringify(this.idCompanion));
                 done();
             }.bind(this));
     });
@@ -129,13 +129,13 @@ describe('History', function () {
             .post('/history')
             .send({
                 companion: this.idCompanion,
-                taskInProgress: this.idTask,
+                taskInProgress: [{id: this.idTask, duration: 123}],
                 date: '2016:02:07'
             })
             .expect(200)
             .end(function (err, res) {
                 assert(err === null);
-                assert(JSON.stringify(res.body.companion) == JSON.stringify(this.idCompanion));
+                assert(JSON.stringify(res.body[0].companion) == JSON.stringify(this.idCompanion));
                 done();
             }.bind(this));
     });

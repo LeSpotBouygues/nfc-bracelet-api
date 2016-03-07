@@ -7,39 +7,45 @@ import * as db from '../models/data_models';
 function *create() {
     const body = this.request.body;
     this.assert(body.companion && body.taskInProgress && body.date, 400, 'missing params');
+    this.assert(body.taskInProgress instanceof Array, 400, 'task must be array');
 
-    let date;
+    let date, companion, task;
 
     try {
         date = body.date.split(':');
         this.assert(date.length === 3, 400, 'date wrong format');
         date = date.map(n => parseInt(n));
+        date = new Date(date[0], date[1] - 1, date[2]);
     } catch (e) {
         this.throw(400, 'date wrong format');
     }
-    try {
-        const companion = yield db.Companion.findById(body.companion).exec();
-        if (!companion) this.throw(400, 'user does not exist');
-    } catch (e) {
-        this.throw(400, 'user does not exist');
-    }
-    try {
-        const task = yield db.Task.findById(body.taskInProgress).exec();
-        if (!task) this.throw(400, 'task does not exist');
-    } catch (e) {
-        this.throw(400, 'task does not exist');
-    }
 
-    let history = yield db.History.findOne({companion: body.companion}).exec();
-    if (!history) history = {};
-    history.companion = body.companion;
-    history.taskInProgress = body.taskInProgress;
-    history.date = new Date(date[0], date[1] - 1, date[2]);
-    history.duration = body.duration;
-    if (history._id) history = yield history.save();
-    else history = yield db.History.create(history);
+    try {
+        companion = yield db.Companion.findById(body.companion).exec();
+    } catch (e) {}
+    this.assert(companion, 400, 'user does not exist');
 
-    this.body = history;
+    try {
+        task = yield db.Task.find({_id: {$in: body.taskInProgress.map(t => t.id)}}).exec();
+    } catch (e) {}
+    this.assert(task, 400, 'task does not exist');
+
+    const toCreate = body.taskInProgress.filter(t => {
+        for (let i=0; i < task.length; i++) {
+            if (JSON.stringify(t.id) === JSON.stringify(task[i]._id)) return true;
+        }
+        return false;
+    });
+    yield db.History.find({companion: body.companion, date}).remove().exec();
+
+    this.body = yield db.History.create(toCreate.map(t => {
+        return {
+            companion: body.companion,
+            date,
+            taskInProgress: t.id,
+            duration: t.duration
+        };
+    }));
 }
 
 function *getRange() {
