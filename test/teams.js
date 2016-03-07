@@ -271,13 +271,13 @@ describe('Teams', function () {
             .expect(400, done);
     });
 
-    it('DELETE /teams/:id should return 401', function (done) {
+    /*it('DELETE /teams/:id should return 401', function (done) {
         request
             .del('/teams/' + this.idTeam)
             .expect(401, done);
-    });
+    });*/
 
-    it('DELETE /teams/:id should return 200', function (done) {
+    /*it('DELETE /teams/:id should return 200', function (done) {
         var encoded = new Buffer('chief:chief').toString('base64');
         request
             .post('/login')
@@ -294,7 +294,7 @@ describe('Teams', function () {
                         done()
                     });
             }.bind(this));
-    });
+    });*/
 
     after(function (done) {
         mongoose.connection.db.dropCollection('companions', function (err) {
