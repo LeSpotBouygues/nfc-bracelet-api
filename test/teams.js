@@ -452,7 +452,10 @@ describe('Teams', function () {
             if (err) done(err);
             mongoose.connection.db.dropCollection('teams', function (err) {
                 if (err) done(err);
-                done();
+                mongoose.connection.db.dropCollection('tasks', function (err) {
+                    if (err) done(err);
+                    done();
+                });
             });
         })
     });

@@ -49,6 +49,38 @@ function *getByName() {
     this.body = yield db.Companion.find({name: nameCandidate}).exec();
 }
 
+function *addTask() {
+    const body = this.request.body;
+    this.assert(body.task, 400, 'missing params');
+    let companion, task;
+    try {
+        companion = yield db.Companion.findById(this.params.idCompanion).exec();
+        task = yield db.Task.findById(body.task).exec();
+    } catch (err) {}
+    this.assert(companion, 400, 'companion does not exist');
+    this.assert(task, 400, 'task does not exist');
+    const idx = companion.tasksInProgress.indexOf(body.task);
+    if (idx !== -1) this.throw(400, 'task already in the companion');
+    companion.tasksInProgress.push(body.task);
+    this.body = yield companion.save();
+}
+
+function *removeTask() {
+    const body = this.request.body;
+    this.assert(body.task, 400, 'missing params');
+    let companion, task;
+    try {
+        companion = yield db.Companion.findById(this.params.idCompanion).exec();
+        task = yield db.Task.findById(body.task).exec();
+    } catch (err) {}
+    this.assert(companion, 400, 'companion does not exist');
+    this.assert(task, 400, 'task does not exist');
+    const idx = companion.tasksInProgress.indexOf(body.task);
+    if (idx === -1) this.throw(400, 'task is not in the companion');
+    companion.tasksInProgress.splice(idx, 1);
+    this.body = yield companion.save();
+}
+
 function *update() {
     const body = this.request.body;
     let companion;
@@ -63,4 +95,4 @@ function *update() {
     this.body = yield companion.save();
 }
 
-export default {create, createFromFile, createToken, list, getById, getByName, update};
+export default {create, createFromFile, createToken, list, getById, getByName, addTask, removeTask, update};
