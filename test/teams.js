@@ -30,16 +30,31 @@ var dataCompanion = [
     }
 ];
 
+var dataTask = [
+    {
+        label_short: 'task1'
+    },
+    {
+        label_short: 'task2'
+    }
+];
+
 describe('Teams', function () {
     before(function (done) {
         db.Companion.create(dataCompanion, function (err, res) {
+            var self = this;
             if (err) return done(err);
-            this.Chief = res[0];
-            this.companionToAdd = res[1];
-            this.companions = res.slice(2).map(function (companion) {
+            self.Chief = res[0];
+            self.companionToAdd = res[1];
+            self.companions = res.slice(2).map(function (companion) {
                 return companion._id;
             });
-            done();
+            db.Task.create(dataTask, function (err, res) {
+                if (err) return done(err);
+                self.task  = res[0];
+                self.task2 = res[1];
+                done();
+            });
         }.bind(this));
     });
 
@@ -246,6 +261,142 @@ describe('Teams', function () {
             .end(function (err, res) {
                 assert(err === null);
                 assert(res.body.companions.length === 2);
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/addTask should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/addTask')
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'missing params');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/addTask should return 400', function (done) {
+        request
+            .put('/teams/' + 123 + '/addTask')
+            .send({
+                task: '123'
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'team does not exist');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/addTask should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/addTask')
+            .send({
+                task: '123'
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'task does not exist');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/addTask should return 200', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/addTask')
+            .send({
+                task: this.task._id
+            })
+            .expect(200)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.body.tasks[0] == this.task._id &&
+                    res.body.companions[0].tasksInProgress[0] == this.task._id);
+                done();
+            }.bind(this));
+    });
+
+    it('PUT /teams/:id/addTask should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/addTask')
+            .send({
+                task: this.task._id
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'task already in the team');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/removeTask should return 400', function (done) {
+        request
+            .put('/teams/' + 123 + '/removeTask')
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'missing params');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/removeTask should return 400', function (done) {
+        request
+            .put('/teams/' + 123 + '/removeTask')
+            .send({
+                task: '123'
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'team does not exist');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/removeTask should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/removeTask')
+            .send({
+                task: '123'
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'task does not exist');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/removeTask should return 400', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/removeTask')
+            .send({
+                task: this.task2
+            })
+            .expect(400)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.text === 'task is not in the team');
+                done();
+            });
+    });
+
+    it('PUT /teams/:id/removeTask should return 200', function (done) {
+        request
+            .put('/teams/' + this.idTeam + '/removeTask')
+            .send({
+                task: this.task._id
+            })
+            .expect(200)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.body.tasks.length === 0 &&
+                    res.body.companions[0].tasksInProgress.length === 0);
                 done();
             });
     });

@@ -65,6 +65,51 @@ function *removeCompanion() {
     this.body = yield team.save();
 }
 
+function *addTask() {
+    const body = this.request.body;
+    this.assert(body.task, 400, 'missing params');
+    let team, task;
+    try {
+        team = yield db.Team.findById(this.params.idTeam).populate('companions').exec();
+        task = yield db.Task.findById(body.task).exec();
+    } catch (err) {}
+    this.assert(team, 400, 'team does not exist');
+    this.assert(task, 400, 'task does not exist');
+    const idx = team.tasks.indexOf(body.task);
+    if (idx !== -1) this.throw(400, 'task already in the team');
+    for (let i =0; i < team.companions.length; i++) {
+        if (team.companions[i].tasksInProgress.indexOf(body.task) === -1) {
+            team.companions[i].tasksInProgress.push(body.task);
+            yield team.companions[i].save();
+        }
+    }
+    team.tasks.push(body.task);
+    this.body = yield team.save();
+}
+
+function *removeTask() {
+    const body = this.request.body;
+    this.assert(body.task, 400, 'missing params');
+    let team, task;
+    try {
+        team = yield db.Team.findById(this.params.idTeam).populate('companions').exec();
+        task = yield db.Task.findById(body.task).exec();
+    } catch (err) {}
+    this.assert(team, 400, 'team does not exist');
+    this.assert(task, 400, 'task does not exist');
+    const idx = team.tasks.indexOf(body.task);
+    if (idx === -1) this.throw(400, 'task is not in the team');
+    for (let i =0; i < team.companions.length; i++) {
+        const idx = team.companions[i].tasksInProgress.indexOf(body.task);
+        if (idx !== -1) {
+            team.companions[i].tasksInProgress.splice(idx, 1);
+            yield team.companions[i].save();
+        }
+    }
+    team.tasks.splice(idx, 1);
+    this.body = yield team.save();
+}
+
 function *update() {
     const body = this.request.body;
     let team;
@@ -92,4 +137,4 @@ function *del() {
     this.body = yield db.Team.remove({_id: this.params.idTeam}).exec();
 }
 
-export default {create, list, listCompanions, addCompanion, removeCompanion, getById, update, del};
+export default {create, list, listCompanions, addCompanion, removeCompanion, addTask, removeTask, getById, update, del};
