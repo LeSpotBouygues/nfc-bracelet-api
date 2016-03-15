@@ -16,7 +16,8 @@ function *create() {
 
 function *createFromFile() {
     yield db.Task.remove();
-    this.body = yield db.Task.create(this.parseData);
+    yield db.Task.create(this.parseData);
+    this.body = 'import done';
 }
 
 function *list() {

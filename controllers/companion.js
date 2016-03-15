@@ -19,7 +19,8 @@ function *create() {
 
 function *createFromFile() {
     yield db.Companion.remove();
-    this.body = yield db.Companion.create(this.parseData);
+    yield db.Companion.create(this.parseData);
+    this.body = 'import done';
 }
 
 function *createToken() {
