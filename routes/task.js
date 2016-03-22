@@ -14,8 +14,9 @@ const parseMultipart = koaBody({formidable: {uploadDir: __dirname + '/..'}, mult
 
 router.post('/tasks', parseBody, task.create);
 router.get('/tasks', task.list);
-router.get('/tasks/open', task.getList);
+router.get('/tasks/open', task.listOpen);
 router.get('/tasks/close', task.listClose);
+router.get('/tasks/niv', task.getNested);
 router.get('/tasks/:idChief/affected', task.listAffected);
 router.get('/tasks/:idChief/inProgress', task.listInProgress);
 router.put('/tasks/:idTask', parseBody, task.update);

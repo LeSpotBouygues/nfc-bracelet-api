@@ -24,7 +24,7 @@ function *list() {
     this.body = yield db.Task.find().exec();
 }
 
-function *getList() {
+function *getNested() {
     var AllProjects = yield db.Task.find({niv: 1, open: true}).exec();
     var tasks = yield db.Task.find().exec();
 
@@ -36,6 +36,10 @@ function *getList() {
     });
 
     this.body = data;
+}
+
+function *listOpen() {
+    this.body = yield db.Task.find({open: true}).exec();
 }
 
 function *listClose() {
@@ -91,7 +95,7 @@ function *del() {
     this.body = yield db.Task.remove({_id : this.params.idTask}).exec();
 }
 
-export default {create, createFromFile, list, getList, listClose, listAffected, listInProgress, update, del};
+export default {create, createFromFile, list, getNested, listOpen, listClose, listAffected, listInProgress, update, del};
 
 function getNestedChildren(arr, parent, isOpen) {
     var out = [];
