@@ -34,7 +34,7 @@ export const tasksLabels  = {
     'oia_oid_codecentreinterne': 'masterCode',
     'oia_oid_libelle_court': 'label_short',
     'oia_oid_libelle_long': 'label_long',
-    'oia_oid_code_niveau': 'niv'
+    'oia_oid_code_niveau': 'niv',
     //'oia_idcfermele': '',
-    //'oia_pointable': 'open'
+    'oia_pointable': 'open'
 };
