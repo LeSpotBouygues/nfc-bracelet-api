@@ -50,6 +50,13 @@ function *getByName() {
     this.body = yield db.Companion.find({name: nameCandidate}).exec();
 }
 
+function *getWithNoTeam() {
+    const teams = yield db.Team.find().exec();
+    const companions = [].concat.apply([], teams.map(t => t.companions.concat(t.chief)));
+    this.body = yield db.Companion.find({_id: {$nin: companions}}).exec();
+}
+
+
 function *addTask() {
     const body = this.request.body;
     this.assert(body.task, 400, 'missing params');
@@ -96,4 +103,4 @@ function *update() {
     this.body = yield companion.save();
 }
 
-export default {create, createFromFile, createToken, list, getById, getByName, addTask, removeTask, update};
+export default {create, createFromFile, createToken, list, getById, getByName, getWithNoTeam, addTask, removeTask, update};

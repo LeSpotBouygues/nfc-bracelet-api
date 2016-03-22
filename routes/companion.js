@@ -19,6 +19,7 @@ router.post('/companions', parseBody, companion.create);
 router.get('/companions', companion.list);
 router.get('/companions/:idCompanion', companion.getById);
 router.get('/companions/:name/name', companion.getByName);
+router.get('/companions/noTeam', companion.getWithNoTeam);
 router.put('/companions/:idCompanion/addTask', parseBody, companion.addTask);
 router.put('/companions/:idCompanion/removeTask', parseBody, companion.removeTask);
 router.put('/companions/:idCompanion', parseBody, companion.update);
