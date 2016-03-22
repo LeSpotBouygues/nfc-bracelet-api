@@ -190,7 +190,7 @@ function *exportPointage() {
     const zip = `pre-pointage-${Date.now().toString()}.zip`;
     const output = fs.createWriteStream(zip);
     const archive = archiver('zip');
-
+    
     archive.pipe(output);
     files.forEach(f => archive.append(fs.createReadStream(f), {name : f}));
     archive.finalize();
@@ -206,7 +206,7 @@ function *exportPointage() {
         S3.upload({Body: fs.createReadStream(zip)}, () => fs.unlinkSync(zip));
     });
 
-    this.body = {url: 'https://s3-eu-west-1.amazonaws.com/bouygues-csv/' + zip};
+    this.body = {url: 'https://s3-eu-west-1.amazonaws.com/bouygues-csv/' + zip, histories: histFiltered};
 }
 
 export default {parse, exportPointage, getWorksheet};
