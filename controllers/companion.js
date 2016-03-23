@@ -18,8 +18,27 @@ function *create() {
 }
 
 function *createFromFile() {
-    yield db.Companion.remove();
-    yield db.Companion.create(this.parseData);
+    const companions = yield db.Companion.find().select('+idPayrol').exec();
+    const toDelete = companions.filter((c) => {
+        return this.parseData.map(d => d.idPayrol).indexOf(c.idPayrol) === -1;
+    });
+    
+    yield db.Companion.find({idPayrol: {$in: toDelete.map(c => c.idPayrol)}}).remove().exec();
+
+    this.parseData = this.parseData.map((c) => {
+        if (!c.aliasName) c.aliasName = `${c.firstName} ${c.lastName}`;
+        return c;
+    });
+
+    yield this.parseData.map(c => {
+        return new Promise((resolve, reject) => {
+            db.Companion.findOneAndUpdate({idPayrol: c.idPayrol}, c, {upsert: true}, (err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
+    });
+
     this.body = 'import done';
 }
 

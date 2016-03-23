@@ -15,8 +15,22 @@ function *create() {
 }
 
 function *createFromFile() {
-    yield db.Task.remove();
-    yield db.Task.create(this.parseData);
+    const tasks = yield db.Task.find().exec();
+    const toDelete = tasks.filter((c) => {
+        return this.parseData.map(d => d.code).indexOf(c.code) === -1;
+    });
+    
+    yield db.Task.find({code: {$in: toDelete.map(c => c.code)}}).remove().exec();
+
+    yield this.parseData.map(t => {
+        return new Promise((resolve, reject) => {
+            db.Task.findOneAndUpdate({code: t.code}, t, {upsert: true}, (err, data) => {
+                if (err) reject(err);
+                else resolve(data);
+            });
+        });
+    });
+    
     this.body = 'import done';
 }
 
