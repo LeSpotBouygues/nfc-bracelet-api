@@ -40,6 +40,16 @@ function *listCompanions() {
     this.body = team.companions;
 }
 
+function *listByChief() {
+    let companion;
+    try {
+        companion = yield db.Companion.findById(this.params.idChief).exec();
+    } catch (err) {}
+    this.assert(companion, 400, 'companion does not exist');
+    this.assert(companion.chief, 400, 'companion is not chief');
+    this.body = yield db.Team.find().populate('companions tasks chief').exec();
+}
+
 function *addCompanion() {
     const body = this.request.body;
     this.assert(body.companion, 400, 'missing params');
@@ -149,4 +159,4 @@ function *del() {
     this.body = yield db.Team.remove({_id: this.params.idTeam}).exec();
 }
 
-export default {create, list, listCompanions, addCompanion, removeCompanion, addTask, removeTask, getById, update, del};
+export default {create, list, listCompanions, listByChief, addCompanion, removeCompanion, addTask, removeTask, getById, update, del};

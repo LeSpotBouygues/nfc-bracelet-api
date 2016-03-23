@@ -131,6 +131,29 @@ describe('Teams', function () {
             .expect(400, done);
     });
 
+    it('GET /teams/:idChief/byChief should return 400', function (done) {
+        request
+            .get('/teams/' + 123 + '/byChief')
+            .expect(400, 'companion does not exist', done);
+    });
+
+    it('GET /teams/:idChief/byChief should return 400', function (done) {
+        request
+            .get('/teams/' + this.companions[0] + '/byChief')
+            .expect(400, 'companion is not chief', done);
+    });
+
+    it('GET /teams/:idChief/byChief should return 200', function (done) {
+        request
+            .get('/teams/' + this.Chief._id + '/byChief')
+            .expect(200)
+            .end(function (err, res) {
+                assert(err === null);
+                assert(res.body.length !== 0);
+                done();
+            });
+    });
+
     it('PUT /teams/:id/addCompanion should return 400', function (done) {
         request
             .put('/teams/' + 123 + '/addCompanion')
