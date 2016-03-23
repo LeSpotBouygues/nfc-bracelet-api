@@ -7,8 +7,15 @@ import * as db from '../models/data_models';
 function *create() {
     const body = this.request.body;
     this.assert(body.chief, 400, 'missing params');
+    let companion;
+    try {
+        companion = yield db.Companion.findById(body.chief).exec();
+    } catch (err) {}
+    this.assert(companion, 400, 'companion does not exist');
     const team = yield db.Team.findOne({chief: body.chief});
     this.assert(!team, 400, 'chief already have a team');
+    companion.chief = true;
+    yield companion.save();
     this.body = yield db.Team.create(body);
 }
 
@@ -134,6 +141,11 @@ function *del() {
     /*const user = yield db.Companion.findOne({_id: this.state.user.sub});
     this.assert(user, 400, 'companion does not exist');
     if (JSON.stringify(team.chief) !== JSON.stringify(user._id) && user.username !== 'admin') this.throw(401, 'not authorized to delete');*/
+    if (team.chief) {
+        const chief = yield db.Companion.findById(team.chief).exec();
+        chief.chief = false;
+        yield chief.save();
+    }
     this.body = yield db.Team.remove({_id: this.params.idTeam}).exec();
 }
 

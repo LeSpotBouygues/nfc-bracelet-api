@@ -7,6 +7,8 @@ import bcrypt from 'bcrypt-nodejs';
 const companionSchema = mongoose.Schema({
     idPayrol: {type: String, select: false},
     idBYCN: {type: String, select: false},
+    idBracelet: {type:String},
+    chief: {type: Boolean, default: false},
     firstName: {type: String},
     lastName: {type: String},
     aliasName: {type: String},
