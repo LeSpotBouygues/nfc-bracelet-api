@@ -152,7 +152,7 @@ function *exportPointage() {
             '$gte': start,
             '$lte': end
         }})
-        .populate('companion', 'idPayrol refPrevPoint refResource category refCompany refCompanyCode')
+        .populate('companion', 'idPayrol firstName lastName refPrevPoint refResource category refCompany refCompanyCode')
         .populate('taskInProgress')
         .exec();
 
