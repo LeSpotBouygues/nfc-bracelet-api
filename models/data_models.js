@@ -12,7 +12,6 @@ const companionSchema = mongoose.Schema({
     firstName: {type: String},
     lastName: {type: String},
     aliasName: {type: String},
-    bracelet: {type: String},
     username: {type: String},
     password: {type: String, select: false},
     nationality: {type: String},

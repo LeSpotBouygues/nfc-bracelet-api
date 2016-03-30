@@ -33,7 +33,7 @@
     },
     "dev" : {
       "user" : "ubuntu",
-      "host" : "54.86.80.245",
+      "host" : "54.174.0.145",
       "ref"  : "origin/master",
       "repo" : "git@github.com:LeSpotBouyguesEpitech/nfc-bracelet-api.git",
       "path" : ".",
