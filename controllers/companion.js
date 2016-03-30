@@ -111,7 +111,7 @@ function *removeTask() {
 function *update() {
     const body = this.request.body;
     let companion;
-    const labels = ['firstName', 'lastName', 'aliasName', 'idBracelet', 'username', 'password', 'company', 'nationality', 'position', 'workPermit', 'vacationStart', 'vacationEnd'];
+    const labels = ['firstName', 'lastName', 'aliasName', 'idBracelet', 'username', 'password', 'company', 'nationality', 'position', 'workPermit', 'expirationDate', 'vacationStart', 'vacationEnd'];
     try {
         companion = yield db.Companion.findById(this.params.idCompanion).exec();
     } catch (err) {}
