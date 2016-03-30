@@ -80,7 +80,7 @@ function *removeCompanion() {
     this.assert(companion, 400, 'companion does not exist');
     const idx = team.companions.indexOf(body.companion);
     if (idx === -1) this.throw(400, 'companion is not in the team');
-    companion.tasksInProgress.filter(cTask => team.tasks.indexOf(cTask) === -1);
+    companion.tasksInProgress = companion.tasksInProgress.filter(cTask => team.tasks.indexOf(cTask) === -1);
     yield companion.save();
     team.companions.splice(idx, 1);
     this.body = yield team.save();

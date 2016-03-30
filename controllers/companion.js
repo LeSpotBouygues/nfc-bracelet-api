@@ -58,7 +58,7 @@ function *list() {
 
 function *getById() {
     try {
-        var companion = yield db.Companion.findById(this.params.idCompanion).exec();
+        var companion = yield db.Companion.findById(this.params.idCompanion).populate('tasksInProgress').exec();
     } catch (err) {
     }
     this.body = companion;
