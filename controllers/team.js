@@ -62,6 +62,8 @@ function *addCompanion() {
     this.assert(companion, 400, 'companion does not exist');
     const idx = team.companions.indexOf(body.companion);
     if (idx !== -1) this.throw(400, 'companion already in the team');
+    companion.tasksInProgress = team.tasks;
+    yield companion.save();
     team.companions.push(body.companion);
     this.body = yield team.save();
 }
@@ -78,6 +80,8 @@ function *removeCompanion() {
     this.assert(companion, 400, 'companion does not exist');
     const idx = team.companions.indexOf(body.companion);
     if (idx === -1) this.throw(400, 'companion is not in the team');
+    companion.tasksInProgress.filter(cTask => team.tasks.indexOf(cTask) === -1);
+    yield companion.save();
     team.companions.splice(idx, 1);
     this.body = yield team.save();
 }
