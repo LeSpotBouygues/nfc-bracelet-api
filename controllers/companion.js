@@ -53,7 +53,7 @@ function *createToken() {
 }
 
 function *list() {
-    this.body = yield db.Companion.find().exec();
+    this.body = yield db.Companion.find().populate('tasksInProgress').exec();
 }
 
 function *getById() {
