@@ -20,7 +20,22 @@ function *create() {
 }
 
 function *list() {
-    this.body = yield db.Team.find().populate('companions tasks chief').exec();
+    this.body = yield db.Team.find()
+      .populate([
+          {
+              path: 'companions',
+              populate: {
+                  path: 'tasksInProgress',
+                  model: 'Task'
+              }
+          },
+          {
+              path: 'tasks'
+          },
+          {
+              path: 'chief'
+          }
+      ]).exec();
 }
 
 function *getById() {
