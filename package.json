@@ -6,7 +6,8 @@
   "scripts": {
     "test": "ENV=dev mocha --reporter spec --bail test/*.js",
     "deploy-dev": "pm2 deploy ecosystem.json dev",
-    "cover": "ENV=dev istanbul cover node_modules/mocha/bin/_mocha"
+    "cover": "ENV=dev istanbul cover node_modules/mocha/bin/_mocha",
+    "delete": "mongo nfc-api-db --eval 'db.getCollectionNames().forEach(function(n){db[n].remove({})});'"
   },
   "repository": {
     "type": "git",

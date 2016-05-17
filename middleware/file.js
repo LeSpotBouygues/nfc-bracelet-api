@@ -101,6 +101,7 @@ function getISOdate(date) {
 
 function fillCsv(history, start, end) {
     let template =
+        '\ufeff' +
         getData(history[0].companion.refPrevPoint) + '¤¤' +
         'ENT¤¤' +
         'TIA¤¤' +
@@ -185,7 +186,7 @@ function *exportPointage() {
     histFiltered.forEach((h) => {
         const file = `${h[0].companion.refCompany}.csv`;
         files.push(file);
-        fs.writeFileSync(file, fillCsv(h, start, end));
+        fs.writeFileSync(file, fillCsv(h, start, end), 'utf8');
     });
     const zip = `pre-pointage-${Date.now().toString()}.zip`;
     const output = fs.createWriteStream(zip);
