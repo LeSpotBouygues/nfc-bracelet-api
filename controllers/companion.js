@@ -23,6 +23,7 @@ function *createFromFile() {
         return this.parseData.map(d => d.idPayrol).indexOf(c.idPayrol) === -1;
     });
     
+    yield db.Team.find({chief: {$in: toDelete.map(c => c._id)}}).remove().exec();
     yield db.Companion.find({idPayrol: {$in: toDelete.map(c => c.idPayrol)}}).remove().exec();
 
     this.parseData = this.parseData.map((c) => {
