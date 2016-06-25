@@ -172,8 +172,10 @@ function *del() {
     if (JSON.stringify(team.chief) !== JSON.stringify(user._id) && user.username !== 'admin') this.throw(401, 'not authorized to delete');*/
     if (team.chief) {
         const chief = yield db.Companion.findById(team.chief).exec();
-        chief.chief = false;
-        yield chief.save();
+        if (chief) {
+            chief.chief = false;
+            yield chief.save();    
+        }
     }
     this.body = yield db.Team.remove({_id: this.params.idTeam}).exec();
 }
